@@ -1,0 +1,71 @@
+#!/bin/bash
+
+# jscriptsconfig - Configurator Script for the Joomla Bash scripts
+#
+# Copyright 2024 René Kreijveld - email@renekreijveld.nl
+# This program is free software; you may redistribute it and/or modify it.
+#
+# This script collects general configuration information and stores this in a configuration file.
+# The configuration file is stored as $HOME/.config/jbashscripts/config.
+
+# Constants
+VERSION=1.0
+MYNAME=$(basename "${0}")
+CONFIG_DIR="$HOME/.config/jbashscripts"
+CONFIG_FILE="$CONFIG_DIR/config"
+
+# Display start message
+echo "${MYNAME} version ${VERSION}, written by René Kreijveld."
+
+# Create the config directory if it doesn't exist
+if [[ ! -d "${CONFIG_DIR}" ]]; then
+    mkdir -p "${CONFIG_DIR}"
+    echo "Created directory: ${CONFIG_DIR}"
+fi
+
+# Function to prompt for a value, with the option to keep the current one
+prompt_for_value() {
+    local current_value="$1"
+    local prompt_message="$2"
+    local new_value
+
+    if [[ -n "${current_value}" ]]; then
+        read -p "${prompt_message} [$current_value]: " new_value
+        # If the user input is empty, keep the current value
+        if [[ -z "${new_value}" ]]; then
+            new_value="${current_value}"
+        fi
+    else
+        read -p "${prompt_message}: " new_value
+    fi
+
+    echo "${new_value}"
+}
+
+# Check if the config file exists
+if [[ -f "${CONFIG_FILE}" ]]; then
+    echo "Configuration file already exists at ${CONFIG_FILE}."
+    echo "Current configuration:"
+    echo "========================"
+    source "${CONFIG_FILE}"
+    echo "Root folder: ${rootfolder}"
+    echo "Backup folder for websites: ${backupfolder_websites}"
+    echo "Backup folder for databases: ${backupfolder_databases}"
+    echo "========================"
+    echo "You can keep the current values or enter new ones."
+fi
+
+# Prompt the user for configuration values, allowing them to keep the current ones
+rootfolder=$(prompt_for_value "${rootfolder}" "Enter the folder path where your local websites reside")
+backupfolder_websites=$(prompt_for_value "${backupfolder_websites}" "Enter the folder path for website backups")
+backupfolder_databases=$(prompt_for_value "${backupfolder_databases}" "Enter the folder path for databases backups")
+
+# Write the values to the config file
+cat <<EOF > "${CONFIG_FILE}"
+# Configuration file for jbashscripts
+rootfolder="${rootfolder}"
+backupfolder_websites="${backupfolder_websites}"
+backupfolder_databases="${backupfolder_databases}"
+EOF
+
+echo "Configuration has been saved to ${CONFIG_FILE}"

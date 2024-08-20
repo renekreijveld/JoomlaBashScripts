@@ -1,0 +1,149 @@
+#!/bin/bash
+
+# jbackup -- backup a Joomla website to a tar.gz file
+#
+# This scripts supports Joomla versions 1.0 - 5.x
+#
+# Copyright 2014 - 2024 René Kreijveld - email@renekreijveld.nl
+# This program is free software; you may redistribute it and/or modify it.
+#
+# This script uses the jfunctions script to extract  information about a Joomla installation.
+# The jfunctions script must be in the same folder as where this script is saved.
+#
+# Version history
+# 1.0 Initial version
+# 1.1 Code optimisations
+
+# Constants
+VERSION=1.1
+MYPATH=$(cd $(dirname "${0}"); pwd -P)
+MYNAME=$(basename "${0}")
+VSCODE=""
+GIT=""
+GITIGNORE=""
+HTACCESS=""
+
+# Check if jfunctions script exists
+if [[ ! -f "${MYPATH}/jfunctions" ]]; then
+    echo "Error: Required script 'jfunctions' not found in ${MYPATH}. Exiting."
+    exit 1
+else
+    # Gather Joomla information
+    source "${MYPATH}/jfunctions"
+fi
+
+# Function to show messages (honoring silent mode)
+showmessage() {
+    if [[ "${SILENT}" == "no" ]]; then
+        echo "$1"
+    fi
+}
+
+# display usage information
+usage() {
+    echo ""
+    echo "${MYNAME}" version "${VERSION}, written by René Kreijveld."
+    echo ""
+    echo "Usage: ${MYNAME} [-d] [-z] [-s] [-h]"
+    echo ""
+    echo "-d Add a date-time-stamp to the backup filename."
+    echo "-z Zip. Create the backup as a zip-file, otherwise a tar-gzip file will be created."
+    echo "-s Silent. Display no messages"
+    echo "-h Help. Display this info."
+    echo ""
+    exit 0
+}
+
+checkvscode() {
+    if [[ -d ".vscode" ]]; then
+        showmessage ".vscode folder found, including in backup"
+        VSCODE=".vscode"
+    fi
+}
+
+checkgit() {
+    if [[ -d ".git" ]]; then
+        showmessage ".git folder found, including in backup"
+        GIT=".git"
+    fi
+}
+
+checkgitignore() {
+    if [[ -f ".gitignore" ]]; then
+        showmessage ".gitignore file found, including in backup"
+        GITIGNORE=".gitignore"
+    fi
+}
+
+checkhtaccess() {
+    if [[ -f ".htaccess" ]]; then
+        showmessage ".htaccess file found, including in backup"
+        HTACCESS=".htaccess"
+    fi
+}
+
+# Check if jfunctions script exists
+if [[ ! -f "${MYPATH}/jfunctions" ]]; then
+    echo "Error: Required script 'jfunctions' not found in ${MYPATH}. Exiting."
+    exit 1
+else
+    # Gather Joomla information
+    source "${MYPATH}/jfunctions"
+fi
+
+# process the arguments
+SHOWDATE="no"
+ZIPFILE="no"
+SILENT="no"
+# Argument parsing
+while getopts "dzsh" opt; do
+    case "$opt" in
+        d) SHOWDATE="yes" ;;
+        z) ZIPFILE="yes" ;;
+        s) SILENT="yes" ;;
+        h) usage ;;
+        *) usage ;;
+    esac
+done
+
+# Add a timestamp if requested
+if [[ "${SHOWDATE}" == "yes" ]]; then
+    NOW=$(date +".%Y%m%d-%H%M%S")
+else
+    NOW=""
+fi
+
+showmessage "${MYNAME} version ${VERSION}, written by René Kreijveld."
+
+# Check for presence of hidden files and folders
+checkvscode
+checkgit
+checkgitignore
+checkhtaccess
+
+# Create database dump
+showmessage "Create database dump"
+jdbdump -s
+
+if [[ ! -f "${database}.sql" ]]; then
+    echo "Error: No database dump found. Exiting."
+    exit 1
+fi
+
+showmessage "Backup website"
+
+if [[ "${ZIPFILE}" == "yes" ]]; then
+    BACKUPFILE="${sitename}${NOW}.zip"
+    zip -q -r ${BACKUPFILE} ${HTACCESS} ${VSCODE} ${GIT} ${GITIGNORE} *
+else
+    BACKUPFILE="${sitename}${NOW}.tgz"
+    tar czf ${BACKUPFILE} ${HTACCESS} ${VSCODE} ${GIT} ${GITIGNORE} *
+fi
+
+# Cleanup database dump
+rm -f ${database}.sql
+
+showmessage "Backup is ready at:"
+if [[ "${SILENT}" == "no" ]]; then
+    ls -l ${BACKUPFILE}
+fi

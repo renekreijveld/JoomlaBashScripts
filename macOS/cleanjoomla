@@ -1,0 +1,94 @@
+#!/bin/bash
+
+# cleanjoomla -- Script to delete all Joomla files and folders
+#
+# This scripts supports Joomla versions 1.0 - 5.x
+#
+# Copyright 2021 - 2024 René Kreijveld - email@renekreijveld.nl
+# This program is free software; you may redistribute it and/or modify it.
+#
+# Version history
+# 1.0 Initial version
+# 1.1 Added VERBOSE option
+# 1.2 Code optimisations
+
+# Constants
+VERSION=1.2
+MYPATH=$(cd $(dirname "${0}"); pwd -P)
+MYNAME=$(basename "${0}")
+
+# Function to show messages (honoring SILENT mode)
+showmessage() {
+    if [[ "${SILENT}" == "no" ]]; then
+        echo "$1"
+    fi
+}
+
+# display usage information
+usage() {
+    echo ""
+    echo "${MYNAME}" version "${VERSION}, written by René Kreijveld."
+    echo ""
+    echo "Usage: ${MYNAME} [-v] [-s] [-h]"
+    echo ""
+    echo "-v Verbose: show all files and folders being deleted."
+    echo "-s Silent: no progress messages will be shown."
+    echo "-h Help. Display this info."
+    echo ""
+    echo "If you use both the -v and -s options, the -s option will take precedence."
+    echo ""
+    exit 0
+}
+
+# Main function
+cleanjoomla()
+{
+    local folders=("administrator" "api" "bin" "cache" "cli" "components" "editor" "help" "images" "includes" "installation" "language" "mambots" "layouts" "libraries" "logs" "media" "modules" "plugins" "templates" "tmp" "xmlrpc")
+    local files=(".htaccess" "CHANGELOG.php" "configuration.php-dist" "configuration.php" "COPYRIGHT.php" "CREDITS.php" "CREDITS.php" "globals.php" "htaccess.txt" "index.php" "index2.php" "INSTALL.php" "joomla.xml" "LICENSE.php" "LICENSES.php" "LICENSE.txt" "mainbody.php" "offline.php" "offlinebar.php" "offlinebar.php" "pathway.php" "README.txt" "robots.txt" "robots.txt.dist" "web.config.txt")
+
+    showmessage "Deleting Joomla folders ..."
+    for folder in "${folders[@]}"; do
+        if [[ -d "${folder}" ]]; then
+            rm -rf "${folder}"
+            if [[ "${VERBOSE}" == "yes" ]]; then
+                showmessage "Deleted folder: ${folder}"
+            fi
+        fi
+    done
+
+    showmessage "Deleting Joomla files ..."
+    for file in "${files[@]}"; do
+        if [[ -f "${file}" ]]; then
+            rm -f "${file}"
+            if [[ "${VERBOSE}" == "yes" ]]; then
+                showmessage "Deleted file: ${file}"
+            fi
+        fi
+    done
+
+    showmessage "Joomla files and folders deleted."
+}
+
+# process the arguments
+SILENT="no"
+VERBOSE="no"
+# Argument parsing
+while getopts "vsh" opt; do
+    case "$opt" in
+        v) VERBOSE="yes" ;;
+        s) SILENT="yes" ;;
+        h) usage ;;
+        *) usage ;;
+    esac
+done
+
+showmessage "${MYNAME} version ${VERSION}, written by René Kreijveld."
+
+# Call the main function
+cleanjoomla
+
+# list leftovers
+if [[ "${SILENT}" == "no" ]]; then
+    showmessage "Cleanup finished, these files and folders are still left:"
+    ls -lA | grep -v '^total'
+fi

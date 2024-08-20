@@ -1,0 +1,75 @@
+#!/bin/bash
+
+# joomlalatest -- Download and optionally unzip the latest Joomla CMS
+#
+# Copyright 2024 René Kreijveld - email@renekreijveld.nl
+#
+# This program is free software; you may redistribute it and/or modify it.
+#
+# Version history
+# 1.0 Initial version
+# 1.1 Added silent and unzip options
+# 1.2 Code improvements
+
+# Constants
+VERSION=1.2
+MYNAME=$(basename "${0}")
+
+# show message function
+show_message() {
+    if [[ "${SILENT}" == "no" ]]; then
+        echo "$1"
+    fi
+}
+
+# display usage information
+usage() {
+    echo ""
+    echo "${MYNAME} version ${VERSION}, written by René Kreijveld."
+    echo ""
+    echo "Usage: ${MYNAME} [-u] [-s] [-h]"
+    echo ""
+    echo "-u Unzip. Unzip the downloaded zip file and remove after unzip."
+    echo "-s Silent. Show no messages."
+    echo "-h Help. Display this info."
+    echo ""
+    exit 0
+}
+
+# Default values for options
+UNZIP="no"
+SILENT="no"
+
+# Process the arguments
+while getopts "ush" opt; do
+    case "${opt}" in
+        u)  UNZIP="yes" ;;
+        s)  SILENT="yes" ;;
+        h)  usage ;;
+        \?) echo "Invalid option: -$OPTARG" >&2; exit 1 ;;
+        :)  echo "Option -$OPTARG requires an argument." >&2; exit 1 ;;
+    esac
+done
+
+# Display start message
+show_message "${MYNAME} version ${VERSION}, written by Rene Kreijveld."
+
+# Download latest Joomla and save as joomla_latest.zip
+show_message "Downloading latest Joomla ..."
+if ! curl -s -L -o joomla_latest.zip https://www.joomla.org/latest; then
+    echo "Error: Failed to download Joomla." >&2
+    exit 1
+fi
+
+# Unzip if requested
+if [[ "${UNZIP}" == "yes" ]]; then
+    if unzip -q -o joomla_latest.zip; then
+        rm joomla_latest.zip
+        show_message "Joomla was downloaded and unzipped in the current folder."
+    else
+        echo "Error: Failed to unzip joomla_latest.zip." >&2
+        exit 1
+    fi
+else
+    show_message "Joomla download finished. See file joomla_latest.zip."
+fi
