@@ -1,5 +1,5 @@
 # JoomlaBashScripts
-macOS/Linux CLI tools for Joomla development.  
+macOS/Linux bash scripts for Joomla development.  
 This is a set of scripts to be used on macOS and Linux machines for Joomla development.
 
 ## Installation
@@ -9,7 +9,7 @@ This is a set of scripts to be used on macOS and Linux machines for Joomla devel
 3. Make **all** scripts executable with `chmod +x /usr/local/bin/<scriptname>`
 4. Run the script `jscriptsconfig` to configure the default settings, where your websites are stored and where the scripts may store databasebackups and websitebackups.
 
-Every cli tool can be run with the -h parameter to display help information.
+Every script can be run with the -h parameter to display help information.
 
 ## The scripts:
 
@@ -83,4 +83,4 @@ Syntax: `joomlalatest [-u] [-s] [-h]`
 -h: Help. Display this info.
 
 #### jfunctions
-jfunctions is a generic script that extract database credentials, website name and Joomla version. You should not run jfunctions yourself, it is used by the other scripts.
+jfunctions is a generic script that extracts database credentials, website name and Joomla version. You should not run jfunctions, it is used by the other scripts.
