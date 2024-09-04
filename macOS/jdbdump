@@ -60,7 +60,7 @@ usage() {
     echo "-d Add a date-time-stamp to the database dump filename."
     echo "-c Compress the database dump with gzip."
     echo "-b Save the backup to the default backup folder."
-    echo "-s Silent. Display no messages"
+    echo "-s Silent. Display no messages."
     echo "-h Help. Display this info."
     echo ""
     exit 0
