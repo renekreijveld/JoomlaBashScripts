@@ -48,7 +48,7 @@ usage() {
     echo ""
     echo "-d Add a date-time-stamp to the backup filename."
     echo "-z Zip. Create the backup as a zip-file, otherwise a tar-gzip file will be created."
-    echo "-s Silent. Display no messages"
+    echo "-s Silent. Display no messages."
     echo "-h Help. Display this info."
     echo ""
     exit 0
