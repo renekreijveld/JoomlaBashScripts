@@ -1,6 +1,5 @@
 # JoomlaBashScripts
-macOS/Liux CLI tools for Joomla development
-
+macOS/Linux CLI tools for Joomla development.  
 This is a set of scripts to be used on macOS and Linux machines for Joomla development.
 
 ## Installation
