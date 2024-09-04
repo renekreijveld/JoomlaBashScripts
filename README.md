@@ -5,9 +5,9 @@ This is a set of scripts to be used on macOS and Linux machines for Joomla devel
 ## Installation
 
 1. Download/clone this repository.
-2. Copy the scripts joomlabackups and jfunctions to a directory in your PATH, for example to /usr/local/bin.
+2. Copy all scripts to a directory in your PATH, for example to /usr/local/bin.
 3. Make **all** scripts executable with `chmod +x /usr/local/bin/<scriptname>`
-4. Run the script `jscriptsconfig` to configure some default settings, like where your websites are stored and where the scripts may store databasebackups and websitebackups.
+4. Run the script `jscriptsconfig` to configure the default settings, where your websites are stored and where the scripts may store databasebackups and websitebackups.
 
 Every cli tool can be run with the -h parameter to display help information.
 
