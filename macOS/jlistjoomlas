@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# jlistjoomlas -- Find Joomla instances on your Linux server.
+# jlistjoomlas -- Find Joomla instances on your masOS system/Linux server.
 # Supports Joomla versions 1.0 - 5.x
 #
 # Copyright 2024 René Kreijveld - email@renekreijveld.nl
@@ -45,7 +45,7 @@ usage() {
     echo ""
     echo "${MYNAME} version ${VERSION}, written by Rene Kreijveld."
     echo ""
-    echo "Usage: ${MYNAME} [-s] [-c] [-h] [-r release]"
+    echo "Usage: ${MYNAME} [-s] [-r release] [-c] [-h]"
     echo ""
     echo "-s Short. Only display path and Joomla version."
     echo "-r Release version. Only display information about Joomla sites with given release version (e.g., 1.5, 2.5, 3.4)."
